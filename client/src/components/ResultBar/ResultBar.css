@@ -87,12 +87,12 @@
 .progress-title {
   text-align: center;
   margin: 0 0 20px 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* font-size: 1.2rem; */
+  /* font-weight: 600; */
+  /* color: #333; */
+  /* padding: 15px; */
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* border-radius: 10px; */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }

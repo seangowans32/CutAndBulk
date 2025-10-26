@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ResultBar from './ResultBar/ResultBar';
+import ResultBar from './components/ResultBar/ResultBar';
 import AdditionalInfo from './AdditionalInfo/AdditionalInfo';
 import CalCalculator from './CalCalculator/CalCalculator';
-import FoodIntake from './FoodIntake/FoodIntake';
+import FoodIntake from './components/FoodIntake/FoodIntake';
 
 const BodyCalculator = () => {
   const [calories, setCalories] = useState(null);

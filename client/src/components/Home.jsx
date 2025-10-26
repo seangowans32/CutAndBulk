@@ -9,18 +9,14 @@ import './Home.css';
 // import Footer from './Footer.jsx';
 
 
-import BodyCalculator from './components/BodyCalculator.jsx';
-import RegistrationForm from './components/RegistrationForm.jsx';
-import LoginForm from './components/LoginForm.jsx';
-import History from './components/History.jsx';
+import BodyCalculator from './BodyCalculator.jsx';
+import RegistrationForm from './RegistrationForm.jsx';
+import LoginForm from './LoginForm.jsx';
+import History from './History.jsx';
 
 import Footer from './Footer.jsx';
 
 export default function Home() {
-  // Years of Experience Calculation
-  // const yearStart = new Date(2018, 10, 1);
-  // const currentDate = new Date(Date.now());
-  // const yearsOfExperience = currentDate.getFullYear() - yearStart.getFullYear();
 
   // AOS Animations
   useEffect(() => {
