@@ -1,0 +1,61 @@
+.food-favorites {
+  margin-top: 40px;
+}
+
+.food-intake-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-5);
+  margin-bottom: 5px;
+}
+
+.food-intake-item:last-of-type {
+  margin: 0;
+}
+
+.food-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.food-name {
+  font-weight: 500;
+}
+
+.food-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.add-calories-btn, .subtract-calories-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--border-radius-5);
+  font-size: 16px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all ease-in-out .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-calories-btn {
+  background: var(--green);
+  color: var(--white);
+}
+
+.subtract-calories-btn {
+  background: var(--red);
+  color: var(--white);
+}
+
+.add-calories-btn:hover,
+.subtract-calories-btn:hover {
+  transform: scale(1.1);
+}

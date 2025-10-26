@@ -47,9 +47,9 @@ const ResultBar = ({ calories, dailyCalories }) => {
       
       <div className="results flex">
         <div className="calorie-labels">
-          <span>Cut: {calories ? calories.cut : '-'}</span>
-          <span>Maintain: {calories ? calories.maintain : '-'}</span>
-          <span>Bulk: {calories ? calories.bulk : '-'}</span>
+          <span className="text-small">Cut: {calories ? calories.cut : '-'}</span>
+          <span className="text-small">Maintain: {calories ? calories.maintain : '-'}</span>
+          <span className="text-small">Bulk: {calories ? calories.bulk : '-'}</span>
         </div>
 
         <div className="calorie-bar-container">

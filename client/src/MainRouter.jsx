@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header.jsx';
 import Home from './components/Home.jsx';
-import Contact from './components/Contact.jsx';
+import RegistrationForm from './components/RegistrationForm.jsx';
+import './components/Global.css';
+import './components/Header.css';
 
 const MainRouter = () => {
   return (
@@ -9,7 +11,7 @@ const MainRouter = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/registration" element={<RegistrationForm />} />
       </Routes>
     </>
   )

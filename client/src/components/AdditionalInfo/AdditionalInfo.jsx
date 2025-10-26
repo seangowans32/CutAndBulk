@@ -2,7 +2,7 @@ import React from 'react';
 
 const AdditionalInfo = ({ info }) => {
   
-  return info ? <div className="info-box">{info}</div> : null;
+  return info ? <p className="info-box">{info}</p> : null;
 };
 
 export default AdditionalInfo;

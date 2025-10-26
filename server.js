@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
 import config from "./config/config.js";
 import app from "./server/express.js";
-import contactRoutes from "./server/routes/contact.routes.js";
 import userRoutes from "./server/routes/user.routes.js";
 import authRoutes from "./server/routes/auth.routes.js";
 
 // Routes
-app.use("/api/contacts", contactRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 

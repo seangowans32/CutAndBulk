@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ResultBar from './components/ResultBar/ResultBar';
-import AdditionalInfo from './AdditionalInfo/AdditionalInfo';
-import CalCalculator from './CalCalculator/CalCalculator';
-import FoodIntake from './components/FoodIntake/FoodIntake';
+import ResultBar from './ResultBar/ResultBar.jsx';
+import AdditionalInfo from './AdditionalInfo/AdditionalInfo.jsx';
+import CalCalculator from './CalCalculator/CalCalculator.jsx';
+import FoodIntake from './FoodIntake/FoodIntake.jsx';
 
 const BodyCalculator = () => {
   const [calories, setCalories] = useState(null);
@@ -43,13 +43,13 @@ const BodyCalculator = () => {
     <div className="body-specs">
       <ResultBar calories={calories} dailyCalories={dailyCalories} />
 
-      <div className="flex">
-        <div className='col-left'>
+      <div className="flex gap-40">
+        <div className='col'>
           <CalCalculator onCaloriesCalculated={handleCaloriesCalculated} onFieldFocus={handleFocus} />
           <AdditionalInfo info={info} />
         </div>
 
-        <div className='col-right'>
+        <div className='col'>
           {calories ? (
             <FoodIntake onCaloriesUpdate={handleDailyCaloriesUpdate} />
           ) : (

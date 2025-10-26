@@ -8,7 +8,7 @@ export default function Header() {
           <nav className="flex gap-20">
             <span className="logo">SG</span>
             <Link to="/">Home</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/registration">Registration</Link>
           </nav>
         </div>
       </header>
