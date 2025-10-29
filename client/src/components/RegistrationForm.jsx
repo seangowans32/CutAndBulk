@@ -27,10 +27,6 @@ const RegistrationForm = () => {
               </div>
 
               <div className='form-group'>
-                <input type="date" placeholder='Date of Birth' required />
-              </div>
-
-              <div className='form-group'>
                 <input type="password" placeholder='Password' required />
               </div>
 
