@@ -1,5 +1,6 @@
 // API base URL - points to Express server
-const API_BASE = 'http://localhost:3000/api';
+// Use environment variable in production, fallback to localhost for development
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 /**
  * Generic API request function with credentials support

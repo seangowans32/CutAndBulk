@@ -4,6 +4,11 @@ import app from "./server/express.js";
 import userRoutes from "./server/routes/user.routes.js";
 import authRoutes from "./server/routes/auth.routes.js";
 import { startDailyResetScheduler } from "./server/helpers/dailyResetScheduler.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -20,13 +25,20 @@ mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`);
 });
 
-// Root route (home)
-app.get("/", (req, res) => {
-  res.type("text/plain");
-  res.send(
-    "Wake up, Sean…\nThe Matrix has you…\nFollow the white rabbit.\nKnock, knock, Sean."
-  );
-});
+// In production, serve React app for all non-API routes
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
+  });
+} else {
+  // Root route (home) - only for development
+  app.get("/", (req, res) => {
+    res.type("text/plain");
+    res.send(
+      "Wake up, Sean…\nThe Matrix has you…\nFollow the white rabbit.\nKnock, knock, Sean."
+    );
+  });
+}
 
 // Start server
 app.listen(config.port, (err) => {
