@@ -4,13 +4,13 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
   username: { type: String, trim: true, required: "Username is required", unique: "Username already exists" },
   email: { type: String, trim: true, unique: "Email already exists", required: "Email is required" },
-  dateOfBirth: { type: Date, required: "Date of birth is required" },
   password: { type: String, required: "Password is required" },
   
   // User's body data and calorie goals
   bodyData: {
     weight: { type: Number },
     height: { type: Number },
+    age: { type: Number },
     gender: { type: String, enum: ['male', 'female'] },
     activityLevel: { type: String },
     calories: {
@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema({
   favoriteFoods: [{
     name: { type: String, required: true },
     calories: { type: Number, required: true },
+    quantity: { type: Number, default: 0 },
     addedAt: { type: Date, default: Date.now }
   }],
   

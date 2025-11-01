@@ -135,6 +135,11 @@ img {
   min-height: 100vh;
 }
 
+.user-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 ul {
   padding: 0;
   margin: 0;
@@ -207,6 +212,28 @@ a:hover {
 
 
 /* Form Styles */
+.login-form h2 {
+  margin: 0 0 20px;
+}
+
+.login-form .logout-content {
+  justify-content: center;
+  text-align: center;
+}
+
+.login-form p {
+  flex: 0 0 100%
+}
+
+.login-form form {
+  flex: 1;
+}
+
+.login-form .frontend-button {
+  flex: 1;
+  width:100%;
+}
+
 .form-container {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius-20);
@@ -255,7 +282,7 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type="number"]:focus,
+input:focus,
 select:focus {
   outline: none;
   box-shadow: 0 0 0 1px var(--white);

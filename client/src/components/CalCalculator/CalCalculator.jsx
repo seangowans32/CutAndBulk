@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { UserAPI, AuthAPI } from '../../api.js';
 
 const CalCalculator = ({ onCaloriesCalculated, onFieldFocus }) => {
   const [weight, setWeight] = useState('');
@@ -6,6 +7,61 @@ const CalCalculator = ({ onCaloriesCalculated, onFieldFocus }) => {
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('male');
   const [activityLevel, setActivityLevel] = useState(1.2);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasExistingData, setHasExistingData] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Load saved data when component mounts (only once)
+  useEffect(() => {
+    // Only load if we haven't loaded data yet
+    if (dataLoaded) return;
+
+    const loadSavedData = async () => {
+      // Check if user is logged in first (check localStorage)
+      const savedUser = localStorage.getItem('user');
+      if (!savedUser) {
+        setIsLoading(false);
+        setDataLoaded(true);
+        return; // User not logged in, skip API call
+      }
+
+      try {
+        const response = await AuthAPI.getUser();
+        if (response.user && response.user.bodyData) {
+          const bodyData = response.user.bodyData;
+          
+          // Mark that we have existing data
+          setHasExistingData(true);
+          
+          // Load saved data (only on first mount, dataLoaded flag prevents reloading)
+          if (bodyData.weight) setWeight(String(bodyData.weight));
+          if (bodyData.height) setHeight(String(bodyData.height));
+          if (bodyData.gender) setGender(bodyData.gender);
+          if (bodyData.activityLevel) setActivityLevel(bodyData.activityLevel);
+          if (bodyData.age) setAge(String(bodyData.age));
+          
+          // If calories are saved, update parent component
+          if (bodyData.calories && bodyData.calories.cut) {
+            onCaloriesCalculated(bodyData.calories);
+          }
+        }
+      } catch (error) {
+        // User might not be logged in or session expired - handle silently
+        // Don't log to console, just proceed without saved data
+        if (error.message && !error.message.includes('Unauthorized')) {
+          console.error('Error loading saved data:', error.message);
+        }
+      } finally {
+        setIsLoading(false);
+        setDataLoaded(true);
+      }
+    };
+
+    loadSavedData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount
 
   const calculateBMR = () => {
     if (gender === 'male') {
@@ -19,16 +75,65 @@ const CalCalculator = ({ onCaloriesCalculated, onFieldFocus }) => {
     return bmr * activityLevel;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const bmr = calculateBMR();
-    const tdee = calculateTDEE(bmr);
-    onCaloriesCalculated({
-      cut: Math.round(tdee - 500),
-      maintain: Math.round(tdee),  // Rounding the maintain calories
-      bulk: Math.round(tdee + 500)
-    });
+    setIsSaving(true);
+    setSaveMessage('');
+    
+    try {
+      const bmr = calculateBMR();
+      const tdee = calculateTDEE(bmr);
+      const calculatedCalories = {
+        cut: Math.round(tdee - 500),
+        maintain: Math.round(tdee),
+        bulk: Math.round(tdee + 500)
+      };
+      
+      // Save to backend
+      await UserAPI.updateBodyData({
+        weight: parseFloat(weight),
+        height: parseFloat(height),
+        age: age ? parseFloat(age) : undefined,
+        gender,
+        activityLevel: parseFloat(activityLevel),
+        calories: calculatedCalories
+      });
+      
+      // Update parent component
+      onCaloriesCalculated(calculatedCalories);
+      
+      // Show appropriate message based on whether we're updating or creating new
+      const message = hasExistingData 
+        ? 'Data updated successfully!' 
+        : 'Data saved successfully!';
+      setSaveMessage(message);
+      
+      // Mark that we now have existing data
+      setHasExistingData(true);
+      
+      setTimeout(() => setSaveMessage(''), 3000);
+    } catch (error) {
+      setSaveMessage(error.message || 'Failed to save data. Please try again.');
+      // Still calculate and show results even if save fails
+      const bmr = calculateBMR();
+      const tdee = calculateTDEE(bmr);
+      onCaloriesCalculated({
+        cut: Math.round(tdee - 500),
+        maintain: Math.round(tdee),
+        bulk: Math.round(tdee + 500)
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="calorie-calculator">
+        <p>Loading saved data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="calorie-calculator">
@@ -88,7 +193,14 @@ const CalCalculator = ({ onCaloriesCalculated, onFieldFocus }) => {
             <option value={1.9}>Extra active (very hard exercise, physical job, or training twice a day)</option>
           </select>
         </div>
-        <button className='frontend-button' type="submit">Calculate</button>
+        <button className='frontend-button' type="submit" disabled={isSaving}>
+          {isSaving ? (hasExistingData ? 'Updating...' : 'Saving...') : (hasExistingData ? 'Update & Recalculate' : 'Calculate & Save')}
+        </button>
+        {saveMessage && (
+          <p className={`info-box ${saveMessage.includes('successfully') ? '' : 'error'}`} style={{ marginTop: '10px' }}>
+            {saveMessage}
+          </p>
+        )}
       </form>
     </div>
   );

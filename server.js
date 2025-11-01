@@ -3,6 +3,7 @@ import config from "./config/config.js";
 import app from "./server/express.js";
 import userRoutes from "./server/routes/user.routes.js";
 import authRoutes from "./server/routes/auth.routes.js";
+import { startDailyResetScheduler } from "./server/helpers/dailyResetScheduler.js";
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -33,4 +34,7 @@ app.listen(config.port, (err) => {
     console.error(err);
   }
   console.info(`Server started on port ${config.port}`);
+  
+  // Start the daily reset scheduler (runs at midnight)
+  startDailyResetScheduler();
 });

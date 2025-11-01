@@ -6,6 +6,8 @@ import {
   requireSignin,
   updateBodyData,
   addFavoriteFood,
+  removeFavoriteFood,
+  updateFavoriteFoodQuantity,
   updateDailyCalories,
   getUserData
 } from "../controllers/auth.controller.js";
@@ -21,6 +23,8 @@ router.get("/logout", logout);
 router.get("/user", requireSignin, getUserData);
 router.put("/body-data", requireSignin, updateBodyData);
 router.post("/favorite-foods", requireSignin, addFavoriteFood);
+router.delete("/favorite-foods", requireSignin, removeFavoriteFood);
+router.put("/favorite-foods/quantity", requireSignin, updateFavoriteFoodQuantity);
 router.put("/daily-calories", requireSignin, updateDailyCalories);
 
 // Example protected route

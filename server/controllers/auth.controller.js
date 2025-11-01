@@ -5,10 +5,10 @@ import config from "../../config/config.js";
 // REGISTER new user
 export const register = async (req, res) => {
   try {
-    const { username, email, dateOfBirth, password } = req.body;
+    const { username, email, password } = req.body;
     
     // Validate required fields
-    if (!username || !email || !dateOfBirth || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
     
@@ -23,19 +23,9 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: "Password must be at least 6 characters long" });
     }
     
-    // Validate date of birth
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    
-    if (age < 13 || age > 120) {
-      return res.status(400).json({ error: "Invalid date of birth" });
-    }
-    
     const user = new User({
       username,
       email,
-      dateOfBirth: birthDate,
       password
     });
     
@@ -46,7 +36,6 @@ export const register = async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
-      dateOfBirth: user.dateOfBirth,
       created: user.created
     };
     
@@ -86,7 +75,6 @@ export const login = async (req, res) => {
         _id: user._id, 
         username: user.username, 
         email: user.email,
-        dateOfBirth: user.dateOfBirth,
         bodyData: user.bodyData,
         favoriteFoods: user.favoriteFoods,
         dailyCalories: user.dailyCalories
@@ -114,13 +102,13 @@ export const logout = (req, res) => {
 export const updateBodyData = async (req, res) => {
   try {
     const userId = req.auth._id;
-    const { weight, height, gender, activityLevel, calories } = req.body;
+    const { weight, height, age, gender, activityLevel, calories } = req.body;
     
     const user = await User.findByIdAndUpdate(
       userId,
       { 
         $set: { 
-          bodyData: { weight, height, gender, activityLevel, calories },
+          bodyData: { weight, height, age, gender, activityLevel, calories },
           updated: new Date()
         }
       },
@@ -144,7 +132,7 @@ export const updateBodyData = async (req, res) => {
 export const addFavoriteFood = async (req, res) => {
   try {
     const userId = req.auth._id;
-    const { name, calories } = req.body;
+    const { name, calories, quantity = 0 } = req.body;
     
     if (!name || !calories) {
       return res.status(400).json({ error: "Name and calories are required" });
@@ -164,11 +152,78 @@ export const addFavoriteFood = async (req, res) => {
       return res.status(400).json({ error: "This food is already in your favorites" });
     }
     
-    user.favoriteFoods.push({ name, calories });
+    user.favoriteFoods.push({ name, calories, quantity });
     await user.save();
     
     res.json({ 
       message: "Food added to favorites", 
+      favoriteFoods: user.favoriteFoods 
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// UPDATE favorite food quantity
+export const updateFavoriteFoodQuantity = async (req, res) => {
+  try {
+    const userId = req.auth._id;
+    const { name, quantity } = req.body;
+    
+    if (!name || quantity === undefined) {
+      return res.status(400).json({ error: "Name and quantity are required" });
+    }
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Find and update the food's quantity
+    const food = user.favoriteFoods.find(food => 
+      food.name.toLowerCase() === name.toLowerCase()
+    );
+    
+    if (!food) {
+      return res.status(404).json({ error: "Food not found in favorites" });
+    }
+    
+    food.quantity = quantity;
+    await user.save();
+    
+    res.json({ 
+      message: "Food quantity updated", 
+      favoriteFoods: user.favoriteFoods 
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// DELETE favorite food
+export const removeFavoriteFood = async (req, res) => {
+  try {
+    const userId = req.auth._id;
+    const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: "Food name is required" });
+    }
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Remove food from favorites array
+    user.favoriteFoods = user.favoriteFoods.filter(food => 
+      food.name.toLowerCase() !== name.toLowerCase()
+    );
+    
+    await user.save();
+    
+    res.json({ 
+      message: "Food removed from favorites", 
       favoriteFoods: user.favoriteFoods 
     });
   } catch (err) {

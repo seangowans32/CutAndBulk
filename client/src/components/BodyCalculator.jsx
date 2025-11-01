@@ -1,13 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ResultBar from './ResultBar/ResultBar.jsx';
 import AdditionalInfo from './AdditionalInfo/AdditionalInfo.jsx';
 import CalCalculator from './CalCalculator/CalCalculator.jsx';
 import FoodIntake from './FoodIntake/FoodIntake.jsx';
+import { AuthAPI } from '../api.js';
 
 const BodyCalculator = () => {
   const [calories, setCalories] = useState(null);
   const [info, setInfo] = useState('');
   const [dailyCalories, setDailyCalories] = useState(0);
+  const [user, setUser] = useState(null);
+
+  // Load user data on mount
+  useEffect(() => {
+    const loadUser = async () => {
+      // First check localStorage for quick access
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          setUser(parsedUser);
+        } catch (error) {
+          // If localStorage data is corrupted, try API
+        }
+      }
+
+      // Try to fetch fresh user data from API
+      try {
+        const response = await AuthAPI.getUser();
+        if (response.user) {
+          setUser(response.user);
+          // Update localStorage with fresh data
+          localStorage.setItem('user', JSON.stringify(response.user));
+        }
+      } catch (error) {
+        // User not logged in or session expired - use localStorage data if available
+        if (!savedUser) {
+          setUser(null);
+        }
+      }
+    };
+
+    loadUser();
+  }, []);
 
   const handleCaloriesCalculated = (calculatedCalories) => {
     setCalories(calculatedCalories);
@@ -41,6 +76,21 @@ const BodyCalculator = () => {
 
   return (
     <div className="body-specs">
+      {user ? (
+        <div className="user-title">
+          <h3>Welcome, {user.username}!</h3>
+          <p className="text-small" style={{ marginTop: '5px', opacity: 0.8 }}>
+            You are logged in and your data will be saved.
+          </p>
+        </div>
+      ) : (
+        <div className="user-title" style={{ marginBottom: '20px' }}>
+          <p className="text-small" style={{ marginTop: '5px', opacity: 0.8 }}>
+            Please <a href="/login">login</a> to save your data.
+          </p>
+        </div>
+      )}
+
       <ResultBar calories={calories} dailyCalories={dailyCalories} />
 
       <div className="flex gap-40">

@@ -31,10 +31,9 @@
   gap: 5px;
 }
 
-.add-calories-btn, .subtract-calories-btn {
+.add-calories-btn, .subtract-calories-btn, .remove-from-favorites-btn, .food-quantity {
   width: 30px;
   height: 30px;
-  border: none;
   border-radius: var(--border-radius-5);
   font-size: 16px;
   font-weight: 300;
@@ -42,19 +41,21 @@
   transition: all ease-in-out .2s;
   display: flex;
   align-items: center;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
   justify-content: center;
 }
 
 .add-calories-btn {
   background: var(--green);
-  color: var(--white);
 }
 
 .subtract-calories-btn {
   background: var(--red);
-  color: var(--white);
 }
 
+.remove-from-favorites-btn:hover,
 .add-calories-btn:hover,
 .subtract-calories-btn:hover {
   transform: scale(1.1);
