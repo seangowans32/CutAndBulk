@@ -28,7 +28,13 @@ mongoose.connection.on("error", () => {
 // In production, serve React app for all non-API routes
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/dist/index.html'));
+    const indexPath = path.join(__dirname, 'client/dist/index.html');
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error('Error sending index.html:', err);
+        res.status(500).send('Error loading application. Please check build files exist.');
+      }
+    });
   });
 } else {
   // Root route (home) - only for development
@@ -40,13 +46,13 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Start server
-app.listen(config.port, (err) => {
-  if (err) {
-    console.error(err);
-  }
+// Start server - bind to 0.0.0.0 to allow external connections (required for Render)
+app.listen(config.port, '0.0.0.0', () => {
   console.info(`Server started on port ${config.port}`);
   
   // Start the daily reset scheduler (runs at midnight)
   startDailyResetScheduler();
+}).on('error', (err) => {
+  console.error('Server error:', err);
+  process.exit(1);
 });
